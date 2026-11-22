@@ -1,0 +1,79 @@
+@if (cargando()) {
+  <p class="text-muted">Cargando reserva...</p>
+
+} @else if (reserva(); as r) {
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+    <h2 class="mb-0">Reserva N° {{ r.id }}</h2>
+    <span class="badge fs-6"
+          [ngClass]="r.estado === 'Confirmada' ? 'text-bg-success' : 'text-bg-secondary'">
+      {{ r.estado }}
+    </span>
+  </div>
+
+  @if (mensaje()) {
+    <div class="alert alert-success">{{ mensaje() }}</div>
+  }
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  <div class="row g-4">
+    <!-- Datos de la reserva -->
+    <div class="col-12 col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header fw-bold">Datos de la reserva</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>Destino:</strong> {{ r.destino }}</li>
+          <li class="list-group-item"><strong>Cliente:</strong> {{ r.cliente }}</li>
+          <li class="list-group-item"><strong>Correo:</strong> {{ r.email }}</li>
+          <li class="list-group-item"><strong>Personas:</strong> {{ r.personas }}</li>
+          <li class="list-group-item"><strong>Total:</strong> {{ r.total | currency:'BOB':'Bs. ':'1.0-0' }}</li>
+          <li class="list-group-item"><strong>Registrada:</strong> {{ r.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</li>
+          @if (r.fechaCancelacion) {
+            <li class="list-group-item text-danger">
+              <strong>Cancelada:</strong> {{ r.fechaCancelacion | date:'dd/MM/yyyy HH:mm' }}
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- Estado del paquete -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-header fw-bold">Paquete</div>
+        <div class="card-body">
+          @if (paquete(); as p) {
+            <h5>{{ p.destino }}</h5>
+            <p class="small text-muted">Salida: {{ p.fechaSalida | date:'dd/MM/yyyy':'UTC' }}</p>
+            <p class="mb-0">
+              Cupos disponibles ahora:
+              <strong>{{ p.cuposDisponibles }} de {{ p.cuposTotales }}</strong>
+            </p>
+          } @else {
+            <p class="text-muted mb-0">No se encontró el paquete.</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+    @if (r.estado === 'Confirmada') {
+      <button class="btn btn-danger" [disabled]="procesando()" (click)="cancelar()">
+        {{ procesando() ? 'Cancelando...' : 'Cancelar reserva' }}
+      </button>
+    } @else {
+      <div class="alert alert-secondary mb-0 py-2">Esta reserva ya fue cancelada y no puede modificarse.</div>
+    }
+    <a routerLink="/reservas" class="btn btn-outline-secondary">Volver al historial</a>
+  </div>
+
+} @else {
+  <!-- Identificador inexistente -->
+  <div class="alert alert-warning">
+    <h4 class="alert-heading">Reserva no encontrada</h4>
+    <p class="mb-3">No existe ninguna reserva con ese identificador.</p>
+    <a routerLink="/reservas" class="btn btn-warning">Volver a mis reservas</a>
+  </div>
+}

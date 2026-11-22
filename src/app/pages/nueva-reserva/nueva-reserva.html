@@ -1,0 +1,102 @@
+<h2 class="mb-3">Nueva reserva</h2>
+
+<div class="row g-4">
+  <!-- FORMULARIO -->
+  <div class="col-12 col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+
+          <!-- Paquete -->
+          <div class="mb-3">
+            <label for="paquete" class="form-label">Paquete turístico *</label>
+            <select id="paquete" class="form-select" formControlName="paqueteId"
+                    [class.is-invalid]="invalido('paqueteId')">
+              <option [ngValue]="0" disabled>Selecciona un paquete</option>
+              @for (p of paquetes(); track p.id) {
+                <option [ngValue]="p.id" [disabled]="p.cuposDisponibles === 0">
+                  {{ p.destino }} ({{ p.cuposDisponibles }} cupos)
+                </option>
+              }
+            </select>
+            <div class="invalid-feedback">Debes elegir un paquete.</div>
+          </div>
+
+          <!-- Cliente -->
+          <div class="mb-3">
+            <label for="cliente" class="form-label">Nombre del cliente *</label>
+            <input id="cliente" type="text" class="form-control" formControlName="cliente"
+                   placeholder="Ej: María López"
+                   [class.is-invalid]="invalido('cliente')">
+            @if (formulario.controls.cliente.hasError('required')) {
+              <div class="invalid-feedback">El nombre es obligatorio.</div>
+            } @else if (formulario.controls.cliente.hasError('minlength')) {
+              <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>
+            }
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico *</label>
+            <input id="email" type="email" class="form-control" formControlName="email"
+                   placeholder="correo@ejemplo.com"
+                   [class.is-invalid]="invalido('email')">
+            @if (formulario.controls.email.hasError('required')) {
+              <div class="invalid-feedback">El correo es obligatorio.</div>
+            } @else if (formulario.controls.email.hasError('email')) {
+              <div class="invalid-feedback">Escribe un correo válido.</div>
+            }
+          </div>
+
+          <!-- Personas -->
+          <div class="mb-3">
+            <label for="personas" class="form-label">Cantidad de personas *</label>
+            <input id="personas" type="number" min="1" class="form-control" formControlName="personas"
+                   [class.is-invalid]="invalido('personas') || excedeCupos()">
+            @if (excedeCupos()) {
+              <div class="invalid-feedback">
+                Solo quedan {{ paqueteSeleccionado()?.cuposDisponibles }} cupos disponibles para este paquete.
+              </div>
+            } @else {
+              <div class="invalid-feedback">Debe ser al menos 1 persona.</div>
+            }
+          </div>
+
+          @if (error()) {
+            <div class="alert alert-danger">{{ error() }}</div>
+          }
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+              {{ guardando() ? 'Guardando...' : 'Confirmar reserva' }}
+            </button>
+            <a routerLink="/paquetes" class="btn btn-outline-secondary">Volver a paquetes</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="col-12 col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">Resumen</div>
+      <div class="card-body">
+        @if (paqueteSeleccionado(); as p) {
+          <h5>{{ p.destino }}</h5>
+          <p class="text-muted small mb-2">{{ p.descripcion }}</p>
+          <ul class="list-unstyled small">
+            <li>Salida: {{ p.fechaSalida | date:'dd/MM/yyyy':'UTC' }}</li>
+            <li>Duración: {{ p.dias }} días</li>
+            <li>Precio por persona: {{ p.precio | currency:'BOB':'Bs. ':'1.0-0' }}</li>
+            <li>Cupos disponibles: {{ p.cuposDisponibles }}</li>
+          </ul>
+          <hr>
+          <p class="fs-5 fw-bold mb-0">Total: {{ total() | currency:'BOB':'Bs. ':'1.0-0' }}</p>
+        } @else {
+          <p class="text-muted mb-0">Selecciona un paquete para ver el resumen.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>  

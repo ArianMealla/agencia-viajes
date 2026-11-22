@@ -1,0 +1,64 @@
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+  <h2 class="mb-0">Mis reservas</h2>
+  <a routerLink="/reservar" class="btn btn-primary">+ Nueva reserva</a>
+</div>
+
+<!-- Filtro por estado -->
+<div class="btn-group mb-3 flex-wrap" role="group" aria-label="Filtrar por estado">
+  @for (e of estados; track e) {
+    <button type="button" class="btn"
+            [ngClass]="filtroEstado() === e ? 'btn-primary' : 'btn-outline-primary'"
+            (click)="filtroEstado.set(e)">
+      {{ e }} <span class="badge text-bg-light ms-1">{{ cantidad(e) }}</span>
+    </button>
+  }
+</div>
+
+@if (cargando()) {
+  <p class="text-muted">Cargando reservas...</p>
+} @else if (reservas().length === 0) {
+  <div class="alert alert-info">
+    Todavía no hay reservas registradas.
+    <a routerLink="/reservar" class="alert-link">Haz la primera aquí</a>.
+  </div>
+} @else if (reservasFiltradas().length === 0) {
+  <div class="alert alert-warning">No hay reservas con estado "{{ filtroEstado() }}".</div>
+} @else {
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>N°</th>
+          <th>Destino</th>
+          <th class="d-none d-md-table-cell">Cliente</th>
+          <th class="d-none d-md-table-cell">Personas</th>
+          <th class="d-none d-lg-table-cell">Total</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of reservasFiltradas(); track r.id) {
+          <tr role="button" (click)="verDetalle(r.id!)">
+            <td>{{ r.id }}</td>
+            <td>{{ r.destino }}</td>
+            <td class="d-none d-md-table-cell">{{ r.cliente }}</td>
+            <td class="d-none d-md-table-cell">{{ r.personas }}</td>
+            <td class="d-none d-lg-table-cell">{{ r.total | currency:'BOB':'Bs. ':'1.0-0' }}</td>
+            <td>{{ r.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge"
+                    [ngClass]="r.estado === 'Confirmada' ? 'text-bg-success' : 'text-bg-secondary'">
+                {{ r.estado }}
+              </span>
+            </td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="['/reservas', r.id]">Ver</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

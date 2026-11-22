@@ -1,59 +1,65 @@
-# AgenciaViajes
+#  Viajes Andinos - Agencia de turismo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.7.
+Aplicación web desarrollada en Angular para gestionar reservas de paquetes turísticos.
+Permite consultar paquetes, registrar reservas, revisar el historial y cancelar reservas.
 
-## Development server
+## Funcionalidades
 
-To start a local development server, run:
+- **Paquetes**: consulta de paquetes turísticos con búsqueda por texto y filtro por categoría.
+- **Reservar**: formulario con validaciones. No permite reservar más personas que los cupos disponibles.
+- **Mis reservas**: historial con fecha y estado, filtrable por estado.
+- **Detalle** (`/reservas/:id`): muestra los datos de la reserva y permite cancelarla.
+  Al cancelar, los cupos vuelven al paquete. Una reserva cancelada no puede cancelarse otra vez.
 
-```bash
-ng serve
+Los datos se guardan en **IndexedDB**, por lo que se conservan al cerrar y abrir el navegador.
+
+## Tecnologías
+
+- Angular
+- Bootstrap 5
+- IndexedDB
+- TypeScript
+
+## Requisitos
+
+- [Node.js](https://nodejs.org) (versión LTS)
+- Angular CLI: `npm install -g @angular/cli`
+
+## Instalación y ejecución
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/[TU_USUARIO]/[NOMBRE_DEL_REPO].git
+   ```
+2. Entrar a la carpeta del proyecto:
+   ```bash
+   cd agencia-viajes
+   ```
+3. Instalar las dependencias:
+   ```bash
+   npm install
+   ```
+4. Ejecutar la aplicación:
+   ```bash
+   ng serve -o
+   ```
+5. Abrir en el navegador: http://localhost:4200
+
+## Estructura del proyecto
+
+```
+src/app/
+├── components/paquete-card/   → Componente hijo reutilizable (tarjeta de paquete)
+├── data/                      → Datos iniciales de los paquetes
+├── models/                    → Interfaces Paquete y Reserva
+├── pages/
+│   ├── paquetes/              → Consulta principal
+│   ├── nueva-reserva/         → Formulario de registro
+│   ├── reservas/              → Historial
+│   └── reserva-detalle/       → Detalle y cancelación
+└── services/agencia.ts        → Servicio que maneja IndexedDB
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Autor
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+[Tu nombre completo] - [Materia / Universidad]
