@@ -11,6 +11,7 @@ export interface Paquete {
   fechaSalida: string;
   cuposTotales: number;
   cuposDisponibles: number;
+  imagen: string;
 }
 
 export interface Reserva {
